@@ -11,7 +11,7 @@
     }
 </div>
 
-<form class="chat-input" onsubmit="sendMessage(event)" asp-action="CreateMessage" asp-controller="Home">
+<form class="chat-input" onsubmit="sendMessage(event)">
     <input type="hidden" name="chatId" value="@Model.Id">
     <input type="text" name="message" id="message-text">
     <button type="submit">Send</button>
@@ -46,39 +46,25 @@
             message.appendChild(footer)
 
             document.querySelector('.chat-body').append(message)
-        })
-
-        
-
-        var joinchat = function () {
-            var url ='/Chat/joinroom/'+_connectionId+'/@Model.Id';
-            axios.post(url,null)
-                .then(function (res) {
-                    console.log("Joing Room",res)
-                })
-                .catch(function (err) {
-                    console.log("Joing Failed",err)
-                });
-        }
+        })     
 
         connection.start()
             .then(function () {
-                connection.invoke('GetConnectionId')
-                    .then(function (res) {
-                        _connectionId =res;
-                        joinchat();
-                    })
+                connection.invoke('joinRoom','@Model.Id');
             })
             .catch(function (error) {
                 console.log(error);
   
             })
+        window.addEventListener('onunload',function () {
+            connection.invoke('leavRoom','@Model.Id');
+        })
 
         var sendMessage = function (event) {
             event.preventDefault();
             var data = new FormData(event.target);
             document.getElementById('message-text').value = '';
-            axios.post('Chat/SendMessage',data)
+            axios.post('Home/SendMessage',data)
                 .then(res => {
                     console.log('Message sent')
                 })

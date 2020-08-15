@@ -1,5 +1,6 @@
 using Chatapp.Database;
 using Chatapp.Hubs;
+using Chatapp.Infrastructure;
 using Chatapp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,8 @@ namespace Chatapp
             })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
-                
+            
+            services.AddTransient<IChatRepostory,ChatRepostory>();
             services.AddSignalR();
         }
 
